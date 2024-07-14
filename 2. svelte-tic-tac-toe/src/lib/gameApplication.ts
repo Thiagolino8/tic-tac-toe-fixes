@@ -1,3 +1,4 @@
+import party from "party-js";
 import { Game } from './domain/game';
 
 export class GameApplication {
@@ -76,8 +77,10 @@ export class GameApplication {
 		let statusText: string;
 		if (this.game.status === 'won') {
 			statusText = `Player ${this.game.currentPlayer} wins!`;
+			party.confetti(this.boardElement);
 		} else if (this.game.status === 'draw') {
 			statusText = "It's a draw!";
+			party.sparkles(this.boardElement);
 		} else {
 			statusText = `Player ${this.game.currentPlayer}'s turn`;
 		}
