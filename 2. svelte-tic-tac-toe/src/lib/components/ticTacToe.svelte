@@ -4,7 +4,8 @@
 	import ResetButton from './resetButton.svelte';
 	import { createGame, type Game } from '$lib/gameLogic.svelte';
 
-    let game: Game = createGame();
+	let board: Board
+	let game: Game = createGame(() => board.gridElement);
 </script>
 
 <div class="p-8 bg-white shadow-lg bg-opacity-10 rounded-xl">
@@ -13,7 +14,7 @@
 	>
 		Tic Tac Toe
 	</h1>
-	<Board board={game.board} makeMove={game.makeMove} />
+	<Board bind:this={board} board={game.board} makeMove={game.makeMove} />
 	<Status currentPlayer={game.currentPlayer} gameStatus={game.gameStatus} />
 	<ResetButton reset={game.reset} />
 </div>

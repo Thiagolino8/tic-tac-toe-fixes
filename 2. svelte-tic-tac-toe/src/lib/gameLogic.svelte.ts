@@ -11,8 +11,8 @@ export type Game = {
 	reset: () => void;
 };
 
-export function createGame(): Game {
-	let board: Cell[] = $state(Array(9).fill(null));
+export function createGame(boardElement: () => HTMLDivElement): Game {
+	const board: Cell[] = $state(Array(9).fill(null));
 	let firstPlayer: Player = Math.random() < 0.5 ? 'X' : 'O';
 	let currentPlayer: Player = $state(firstPlayer);
 	let gameStatus: GameStatus = $state('ongoing');
@@ -29,7 +29,7 @@ export function createGame(): Game {
 			[2, 4, 6]
 		];
 
-		for (let pattern of winPatterns) {
+		for (const pattern of winPatterns) {
 			const [a, b, c] = pattern;
 			if (board[a] && board[a] === board[b] && board[a] === board[c]) {
 				return board[a];
@@ -51,23 +51,17 @@ export function createGame(): Game {
 
 		if (winner) {
 			gameStatus = 'won';
-			setTimeout(() => {
-				const boardElement: HTMLDivElement | null = document.querySelector('.grid');
-				if (boardElement) party.confetti(boardElement);
-			}, 0);
+			party.confetti(boardElement());
 		} else if (isBoardFull) {
 			gameStatus = 'draw';
-			setTimeout(() => {
-				const boardElement: HTMLDivElement | null = document.querySelector('.grid');
-				if (boardElement) party.sparkles(boardElement);
-			}, 0);
+			party.sparkles(boardElement());
 		} else {
 			currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 		}
 	}
 
 	function reset() {
-		board.forEach((cell) => (cell = null));
+		board.forEach((_, index) => (board[index] = null));
 		firstPlayer = firstPlayer === 'X' ? 'O' : 'X';
 		currentPlayer = firstPlayer;
 		gameStatus = 'ongoing';
@@ -75,8 +69,12 @@ export function createGame(): Game {
 
 	return {
 		board,
-		currentPlayer,
-		gameStatus,
+		get currentPlayer() {
+			return currentPlayer;
+		},
+		get gameStatus() {
+			return gameStatus;
+		},
 		makeMove,
 		reset
 	};
